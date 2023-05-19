@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const pass = process.env.DOC_PASS;
 const user = process.env.DOC_USER;
 const uri = `mongodb+srv://${user}:${pass}@cluster0.rbjgw7e.mongodb.net/?retryWrites=true&w=majority`;
@@ -27,7 +27,6 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     app.get("/toys", async (req, res) => {
-      console.log(req.query.email);
       let query = {};
       if (req.query?.email) {
         query = { email: req.query.email };
@@ -40,6 +39,13 @@ async function run() {
       const singleToy = req.body;
       //console.log(singleToy);
       const result = await toysCollection.insertOne(singleToy);
+      res.send(result);
+    });
+
+    app.delete("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toysCollection.deleteOne(query);
       res.send(result);
     });
 
