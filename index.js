@@ -26,11 +26,12 @@ async function run() {
     const toysCollection = client.db("toy-store-db").collection("toys");
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    //all toys read
     app.get("/alltoys", async (req, res) => {
       const result = await toysCollection.find().toArray();
       res.send(result);
     });
-
+    // read toys accoring to only email
     app.get("/toys", async (req, res) => {
       let query = {};
       if (req.query?.email) {
@@ -39,6 +40,37 @@ async function run() {
       const result = await toysCollection.find(query).toArray();
       res.send(result);
     });
+
+    // read and sort toys accoring to only email
+    app.get("/sortToys", async (req, res) => {
+      let result;
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email };
+      }
+      if (req.query?.sort) {
+        const sortType = req.query.sort;
+        if (sortType == "HighToLow") {
+          const options = {
+            // sort returned documents in ascending order by price (A->Z)
+            sort: { price: -1 },
+          };
+          result = await toysCollection.find(query, options).toArray();
+        } else if (sortType == "LowToHigh") {
+          const options = {
+            // sort returned documents in ascending order by price (A->Z)
+            sort: { price: 1 },
+          };
+          result = await toysCollection.find(query, options).toArray();
+        } else {
+          result = await toysCollection.find(query).toArray();
+        }
+      }
+
+      res.send(result);
+    });
+
+    //get toys by their id
     app.get("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -47,13 +79,14 @@ async function run() {
       res.send(result);
     });
 
+    //create a single toy
     app.post("/toys", async (req, res) => {
       const singleToy = req.body;
       //console.log(singleToy);
       const result = await toysCollection.insertOne(singleToy);
       res.send(result);
     });
-
+    //delete a single toy
     app.delete("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -61,7 +94,7 @@ async function run() {
       res.send(result);
     });
 
-    //update one toy
+    //update single toy
     app.put("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const aToy = req.body;
