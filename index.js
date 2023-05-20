@@ -40,6 +40,15 @@ async function run() {
       const result = await toysCollection.find(query).toArray();
       res.send(result);
     });
+    // read toys accoring to only category
+    app.get("/toysByCategory", async (req, res) => {
+      let query = {};
+      if (req.query?.cat) {
+        query = { subCategory: req.query.cat };
+      }
+      const result = await toysCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // read and sort toys accoring to only email
     app.get("/sortToys", async (req, res) => {
