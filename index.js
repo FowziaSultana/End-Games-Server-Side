@@ -1,10 +1,15 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const cors = require("cors");
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your client's origin
+    methods: "GET,POST,PUT,DELETE", // Include PUT method
+  })
+);
 app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -125,7 +130,7 @@ async function run() {
     });
 
     //update single toy
-    app.patch("/toys/:id", async (req, res) => {
+    app.put("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const aToy = req.body;
       // console.log(aToy);
