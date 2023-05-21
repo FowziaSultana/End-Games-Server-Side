@@ -1,13 +1,20 @@
 const express = require("express");
 const app = express();
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send(`Toy App is running `);
+});
 
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+app.listen(port, () => {
+  console.log(`Toy api is running on port: ${port}`);
+});
+
 const pass = process.env.DOC_PASS;
 const user = process.env.DOC_USER;
 const uri = `mongodb+srv://${user}:${pass}@cluster0.rbjgw7e.mongodb.net/?retryWrites=true&w=majority`;
@@ -25,7 +32,7 @@ async function run() {
   try {
     const toysCollection = client.db("toy-store-db").collection("toys");
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    //await client.connect();
     //all toys read
     app.get("/alltoys", async (req, res) => {
       const result = await toysCollection.find().toArray();
@@ -164,11 +171,3 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-app.get("/", (req, res) => {
-  res.send(`Toy App is running `);
-});
-
-app.listen(port, () => {
-  console.log(`Toy api is running on port: ${port}`);
-});
