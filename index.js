@@ -131,15 +131,22 @@ async function run() {
       // console.log(aToy);
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
+      const name = aToy.name;
+      const ratings = aToy.ratings;
+      const price = aToy.price;
+      const quantity = aToy.quantity;
+      const subCategory = aToy.subCategory;
+      const photo = aToy.photo;
+      const details = aToy.details;
       const updateToy = {
         $set: {
-          name: `${aToy.name}`,
-          ratings: `${parseFloat(aToy.ratings)}`,
-          price: `${parseInt(aToy.price)}`,
-          quantity: `${parseInt(aToy.quantity)}`,
-          subCategory: `${aToy.subCategory}`,
-          photo: `${aToy.photo}`,
-          details: `${aToy.details}`,
+          name: name,
+          ratings: ratings,
+          price: price,
+          quantity: quantity,
+          subCategory: subCategory,
+          photo: photo,
+          details: details,
         },
       };
       const result = await toysCollection.updateOne(filter, updateToy, options);
