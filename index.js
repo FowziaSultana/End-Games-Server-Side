@@ -1,7 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 require("dotenv").config();
-const cors = require("cors");
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -31,6 +31,26 @@ async function run() {
       const result = await toysCollection.find().toArray();
       res.send(result);
     });
+
+    // read toys accoring to search result
+    app.get("/searchToys", async (req, res) => {
+      let query = {};
+      let mysearch;
+      let result;
+      if (req.query?.search) {
+        mysearch = req.query?.search;
+        result = await toysCollection
+          .find({
+            name: { $regex: ".*" + mysearch + ".*", $options: "i" },
+          })
+          .toArray();
+        res.send(result);
+      } else {
+        result = await toysCollection.find().toArray();
+        res.send(result);
+      }
+    });
+
     // read toys accoring to only email
     app.get("/toys", async (req, res) => {
       let query = {};
@@ -40,6 +60,7 @@ async function run() {
       const result = await toysCollection.find(query).toArray();
       res.send(result);
     });
+
     // read toys accoring to only category
     app.get("/toysByCategory", async (req, res) => {
       let query = {};
@@ -104,7 +125,7 @@ async function run() {
     });
 
     //update single toy
-    app.put("/toys/:id", async (req, res) => {
+    app.patch("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const aToy = req.body;
       // console.log(aToy);
