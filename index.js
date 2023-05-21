@@ -134,9 +134,9 @@ async function run() {
       const updateToy = {
         $set: {
           name: `${aToy.name}`,
-          ratings: `${aToy.ratings}`,
-          price: `${aToy.price}`,
-          quantity: `${aToy.quantity}`,
+          ratings: `${parseFloat(aToy.ratings)}`,
+          price: `${parseInt(aToy.price)}`,
+          quantity: `${parseInt(aToy.quantity)}`,
           subCategory: `${aToy.subCategory}`,
           photo: `${aToy.photo}`,
           details: `${aToy.details}`,
